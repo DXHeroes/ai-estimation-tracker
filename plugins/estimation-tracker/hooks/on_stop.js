@@ -34,8 +34,36 @@ function tryReadJson(fp) {
 }
 
 /**
+ * Convert a numeric value + unit string to minutes.
+ * Supported units: m/min/mins/minutes, h/hr/hrs/hours, d/day/days.
+ * No unit (legacy format) is treated as minutes.
+ */
+function toMinutes(value, unit) {
+  if (!unit) return value;
+  switch (unit.toLowerCase()) {
+    case "m":
+    case "min":
+    case "mins":
+    case "minutes":
+      return value;
+    case "h":
+    case "hr":
+    case "hrs":
+    case "hours":
+      return value * 60;
+    case "d":
+    case "day":
+    case "days":
+      return value * 8 * 60;
+    default:
+      return value;
+  }
+}
+
+/**
  * Parse transcript for estimate and model.
  * Transcript is JSONL (Claude Code) or may not exist (Cursor).
+ * Estimate is normalized to minutes.
  */
 function parseTranscript(transcriptPath) {
   const result = { estimate: 0, model: "" };
@@ -44,11 +72,13 @@ function parseTranscript(transcriptPath) {
   try {
     const content = fs.readFileSync(transcriptPath, "utf8");
 
-    // ─── Estimate ───
+    // ─── Estimate (with optional unit suffix: m, h, d) ───
     const estMatch = content.match(
-      /<!--\s*ESTIMATE:\s*(\d+(?:\.\d+)?)\s*-->/i
+      /<!--\s*ESTIMATE:\s*(\d+(?:\.\d+)?)\s*(m|min|mins|minutes|h|hr|hrs|hours|d|day|days)?\s*-->/i
     );
-    if (estMatch) result.estimate = parseFloat(estMatch[1]);
+    if (estMatch) {
+      result.estimate = toMinutes(parseFloat(estMatch[1]), estMatch[2]);
+    }
 
     // ─── Model from JSONL ───
     for (const line of content.split("\n")) {
@@ -172,7 +202,7 @@ function main() {
       const actualMinutes = +(actualMs / 60000).toFixed(2);
 
       const transcript = parseTranscript(transcriptPath);
-      const estimatedMinutes = transcript.estimate;
+      const estimatedMinutes = +transcript.estimate.toFixed(2);
       const model = detectModel(transcript.model, input);
       const tool = detectTool(input);
       const loc = tryGetLoc();

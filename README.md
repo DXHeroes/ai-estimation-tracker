@@ -34,7 +34,7 @@ Po instalaci restartuj Claude Code / Cursor.
 1. Zadáš prompt
    └─▶ Hook uloží timestamp startu
 
-2. AI vidí Skill → napíše <!-- ESTIMATE: 15 --> na první řádek
+2. AI vidí Skill → napíše <!-- ESTIMATE: 15m --> na první řádek (odhad lidského času)
 
 3. AI vrátí odpověď
    └─▶ Hook:
@@ -57,8 +57,8 @@ Instrukce "vždy odhadni čas" tak funguje univerzálně.
 |---------|-------|
 | `ai.model` | Model (claude-sonnet-4-..., gpt-4o, ...) |
 | `ai.tool` | Nástroj (claude-code, cursor) |
-| `task.estimated_minutes` | AI odhad v lidských minutách |
-| `task.actual_minutes` | Skutečný wall-clock čas |
+| `task.estimated_minutes` | AI odhad lidského času (normalizovaný na minuty; AI může zadat m/h/d) |
+| `task.actual_minutes` | Skutečný wall-clock čas v minutách |
 | `task.estimation_accuracy` | Poměr estimate/actual (1.0 = perfektní) |
 | `task.loc_added` / `loc_removed` | Řádky kódu (0 bez gitu) |
 | `task.prompt` | Prvních 200 znaků promptu |
@@ -133,18 +133,23 @@ node stats.js 7      # posledních 7 dní
 ```
 ai-estimation-tracker/                ← marketplace repo
 ├── .claude-plugin/
-│   └── marketplace.json              ← marketplace manifest
+│   └── marketplace.json              ← Claude Code marketplace manifest
+├── .cursor-plugin/
+│   └── marketplace.json              ← Cursor marketplace manifest
 ├── plugins/
 │   └── estimation-tracker/           ← plugin
 │       ├── .claude-plugin/
-│       │   └── plugin.json           ← plugin manifest
+│       │   └── plugin.json           ← Claude Code plugin manifest
+│       ├── .cursor-plugin/
+│       │   └── plugin.json           ← Cursor plugin manifest
 │       ├── skills/
 │       │   └── estimation/
 │       │       └── SKILL.md          ← "vždy odhadni čas"
 │       ├── hooks/
-│       │   ├── hooks.json            ← hook config
-│       │   ├── on_prompt_submit.js   ← start timer
-│       │   └── on_stop.js            ← stop + compute + OTEL
+│       │   ├── hooks.json            ← Claude Code hook config
+│       │   ├── hooks-cursor.json     ← Cursor hook config
+│       │   ├── on_prompt_submit.js   ← start timer (shared)
+│       │   └── on_stop.js            ← stop + compute + OTEL (shared)
 │       └── README.md
 ├── otel-config/                      ← monitoring stack config
 │   ├── otel-collector-config.yaml
@@ -179,7 +184,9 @@ claude --debug     # Claude Code
 AI občas Skill ignoruje. Přidej do `CLAUDE.md` v projektu:
 ```markdown
 ## Estimation Rule
-Always write <!-- ESTIMATE: X --> on the very first line of every response.
+Always write <!-- ESTIMATE: Xu --> on the very first line of every response.
+X = your estimate of human-developer time (without AI assistance).
+u = unit: m (minutes), h (hours), d (days). Example: <!-- ESTIMATE: 2h -->
 ```
 
 **OTEL data nepřichází:**

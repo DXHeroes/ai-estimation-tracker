@@ -13,47 +13,58 @@ You MUST write a hidden HTML comment on the **very first line** of every respons
 before any other text, code, or markdown:
 
 ```
-<!-- ESTIMATE: X -->
+<!-- ESTIMATE: Xu -->
 ```
 
-Where `X` is your estimate in **human-developer minutes** — how long this task
-would take a competent human developer working without AI assistance.
+Where `X` is your estimate of **human-developer time** — how long this task
+would take a competent human developer working **without AI assistance**.
+`u` is the time unit: `m` (minutes), `h` (hours), or `d` (days = 8 work hours).
 
 ## Rules
 
 1. **Every response starts with the estimate.** No exceptions.
 2. **Estimate human time, not AI time.** Think about how long a developer would
    spend on this task manually — reading docs, writing code, debugging, testing.
-3. **Use integers.** `<!-- ESTIMATE: 15 -->` not `<!-- ESTIMATE: 14.5 -->`
-4. **Include the full scope:**
+3. **Always include a unit suffix.** Use `m` for minutes, `h` for hours, `d` for days.
+4. **Decimals are allowed.** `<!-- ESTIMATE: 0.5h -->`, `<!-- ESTIMATE: 1.5d -->`
+5. **Pick the natural unit** for the task size:
+   - Quick fixes (< 1 hour): use minutes, e.g. `30m`
+   - Features (1–8 hours): use hours, e.g. `4h`
+   - Large refactors (> 1 day): use days, e.g. `2d`
+6. **Include the full scope:**
    - Reading and understanding the codebase
    - Planning the approach
    - Writing the code
    - Testing and debugging
    - Code review considerations
-5. **Be honest.** Don't round down to look good. A realistic estimate is more
+7. **Be honest.** Don't round down to look good. A realistic estimate is more
    valuable than an optimistic one.
 
 ## Examples
 
 Simple variable rename:
 ```
-<!-- ESTIMATE: 2 -->
+<!-- ESTIMATE: 5m -->
 ```
 
 Add a new API endpoint with validation:
 ```
-<!-- ESTIMATE: 45 -->
+<!-- ESTIMATE: 45m -->
+```
+
+Implement a new feature with tests:
+```
+<!-- ESTIMATE: 4h -->
 ```
 
 Refactor authentication system:
 ```
-<!-- ESTIMATE: 240 -->
+<!-- ESTIMATE: 0.5d -->
 ```
 
 Fix a CSS alignment bug:
 ```
-<!-- ESTIMATE: 5 -->
+<!-- ESTIMATE: 5m -->
 ```
 
 ## Why

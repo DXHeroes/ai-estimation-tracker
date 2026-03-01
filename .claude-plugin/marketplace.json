@@ -12,7 +12,7 @@
       "name": "estimation-tracker",
       "description": "Measures AI estimation accuracy — how long AI thinks a task takes vs how long it actually takes. Tracks per-model, per-tool. Exports to OpenTelemetry.",
       "source": "./plugins/estimation-tracker",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "category": "productivity",
       "keywords": ["estimation", "time-tracking", "opentelemetry", "productivity", "metrics"],
       "author": {
