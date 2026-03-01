@@ -6,8 +6,5 @@
     "name": "DX Heroes",
     "email": "hello@dxheroes.io"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DXHeroes/ai-estimation-tracker"
-  }
+  "repository": "https://github.com/DXHeroes/ai-estimation-tracker"
 }
