@@ -1,0 +1,13 @@
+{
+  "name": "estimation-tracker",
+  "description": "Measures AI estimation accuracy — how long AI thinks a task takes vs how long it actually takes. Tracks per-model, per-tool. Exports to OpenTelemetry.",
+  "version": "0.1.0",
+  "author": {
+    "name": "DX Heroes",
+    "email": "hello@dxheroes.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DXHeroes/ai-estimation-tracker"
+  }
+}
