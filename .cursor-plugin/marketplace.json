@@ -1,0 +1,20 @@
+{
+  "name": "ai-estimation-tracker",
+  "owner": {
+    "name": "DX Heroes",
+    "email": "hello@dxheroes.io"
+  },
+  "metadata": {
+    "description": "Track AI time estimates vs actual implementation time. Works with Claude Code and Cursor."
+  },
+  "plugins": [
+    {
+      "name": "estimation-tracker",
+      "source": "./plugins/estimation-tracker",
+      "description": "Measures AI estimation accuracy -- how long AI thinks a task takes vs how long it actually takes. Tracks per-model, per-tool. Exports to OpenTelemetry.",
+      "version": "0.4.0",
+      "category": "productivity",
+      "keywords": ["estimation", "time-tracking", "opentelemetry", "productivity", "metrics"]
+    }
+  ]
+}

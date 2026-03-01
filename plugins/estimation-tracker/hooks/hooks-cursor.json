@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "beforeSubmitPrompt": [
+      {
+        "command": "node ./hooks/on_prompt_submit.js"
+      }
+    ],
+    "stop": [
+      {
+        "command": "node ./hooks/on_stop.js"
+      }
+    ]
+  }
+}
