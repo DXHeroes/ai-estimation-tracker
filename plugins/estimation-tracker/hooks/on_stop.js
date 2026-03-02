@@ -149,6 +149,36 @@ function tryGetLoc() {
   }
 }
 
+/**
+ * Resolve the OTEL endpoint by reading the env block from Claude Code
+ * settings files, then falling back to process.env and localhost.
+ *
+ * Priority: project settings > local settings > user settings > process.env > fallback
+ */
+function resolveOtelEndpoint(cwd) {
+  const ENV_KEYS = ["AI_TRACKER_OTEL_ENDPOINT", "OTEL_EXPORTER_OTLP_ENDPOINT"];
+
+  const settingsFiles = [
+    cwd && path.join(cwd, ".claude", "settings.json"),
+    cwd && path.join(cwd, ".claude", "settings.local.json"),
+    path.join(os.homedir(), ".claude", "settings.json"),
+  ].filter(Boolean);
+
+  for (const fp of settingsFiles) {
+    const settings = tryReadJson(fp);
+    if (!settings || !settings.env) continue;
+    for (const key of ENV_KEYS) {
+      if (settings.env[key]) return settings.env[key];
+    }
+  }
+
+  for (const key of ENV_KEYS) {
+    if (process.env[key]) return process.env[key];
+  }
+
+  return "http://localhost:4318";
+}
+
 function sendToOtel(endpoint, payload) {
   try {
     const url = new URL(endpoint.replace(/\/$/, "") + "/v1/logs");
@@ -241,10 +271,7 @@ function main() {
       } catch (_) {}
 
       // ─── OTEL ───
-      const otelEndpoint =
-        process.env.AI_TRACKER_OTEL_ENDPOINT ||
-        process.env.OTEL_EXPORTER_OTLP_ENDPOINT ||
-        "http://localhost:4318";
+      const otelEndpoint = resolveOtelEndpoint(input.cwd || process.cwd());
 
       const timeNano = BigInt(stopMs) * BigInt(1000000);
 

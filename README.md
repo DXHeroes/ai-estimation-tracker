@@ -78,17 +78,23 @@ docker compose up -d
 # Grafana: http://localhost:3000 (admin/admin)
 ```
 
-Nastav OTEL endpoint:
+Nastav OTEL endpoint (hook si ho přečte přímo ze settings):
 
-```bash
-# V Claude Code — env vars v settings.json nebo .claude/settings.json
-"env": {
-  "AI_TRACKER_OTEL_ENDPOINT": "http://localhost:4318"
+```jsonc
+// .claude/settings.json (doporučeno — sdílené pro celý tým)
+{
+  "env": {
+    "AI_TRACKER_OTEL_ENDPOINT": "http://localhost:4318"
+  }
 }
-
-# Nebo env var přímo
-export AI_TRACKER_OTEL_ENDPOINT="https://otel.tvoje-domena.com"
 ```
+
+Hook čte endpoint v tomto pořadí:
+1. `.claude/settings.json` → `env.AI_TRACKER_OTEL_ENDPOINT`
+2. `.claude/settings.local.json` → lokální override
+3. `~/.claude/settings.json` → user-level
+4. Systémová env var `AI_TRACKER_OTEL_ENDPOINT`
+5. Fallback: `http://localhost:4318`
 
 Bez OTEL collectoru hook tiše selže — data se ukládají lokálně vždy.
 
