@@ -78,23 +78,21 @@ docker compose up -d
 # Grafana: http://localhost:3000 (admin/admin)
 ```
 
-Nastav OTEL endpoint (hook si ho přečte přímo ze settings):
+Nastav OTEL endpoint v `.claude/settings.json` (sdílené pro celý tým):
 
 ```jsonc
-// .claude/settings.json (doporučeno — sdílené pro celý tým)
+// .claude/settings.json
 {
   "env": {
-    "AI_TRACKER_OTEL_ENDPOINT": "http://localhost:4318"
+    "AI_TRACKER_OTEL_ENDPOINT": "http://localhost:4318",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/json"
   }
 }
 ```
 
-Hook čte endpoint v tomto pořadí:
-1. `.claude/settings.json` → `env.AI_TRACKER_OTEL_ENDPOINT`
-2. `.claude/settings.local.json` → lokální override
-3. `~/.claude/settings.json` → user-level
-4. Systémová env var `AI_TRACKER_OTEL_ENDPOINT`
-5. Fallback: `http://localhost:4318`
+Podporované protokoly (`OTEL_EXPORTER_OTLP_PROTOCOL`):
+- `http/json` — výchozí, OTLP/HTTP na portu 4318
+- `grpc` — OTLP/gRPC na portu 4317
 
 Bez OTEL collectoru hook tiše selže — data se ukládají lokálně vždy.
 
@@ -155,7 +153,8 @@ ai-estimation-tracker/                ← marketplace repo
 │       │   ├── hooks.json            ← Claude Code hook config
 │       │   ├── hooks-cursor.json     ← Cursor hook config
 │       │   ├── on_prompt_submit.js   ← start timer (shared)
-│       │   └── on_stop.js            ← stop + compute + OTEL (shared)
+│       │   ├── on_stop.js            ← stop + compute + OTEL (shared)
+│       │   └── otel-grpc.js          ← gRPC transport (protobuf + http2)
 │       └── README.md
 ├── otel-config/                      ← monitoring stack config
 │   ├── otel-collector-config.yaml
